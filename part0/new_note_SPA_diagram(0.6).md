@@ -14,4 +14,4 @@ sequenceDiagram
 
     Note right of browser: the POST request contains the new note as JSON data
     Note right of browser: POST body: {content: "hi there ", date: "2026-07-28T12:07:33.652Z"}
-    ```
+```
