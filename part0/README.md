@@ -1,0 +1,1 @@
+Solutions of Part 0 "Fundamentals of Web apps" exercises to this folder 
