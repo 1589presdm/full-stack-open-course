@@ -5,9 +5,15 @@ const App = () => {
     { name: 'Arto Hellas' }
   ]) 
   const [newName, setNewName] = useState('')
+  const [showAll, setShowAll] = useState(true)
 
   const addContact = (event) => {
     event.preventDefault()
+    const nameExsists = persons.some(person => person.name === newName)
+    if (nameExsists) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
     const contactObject = {
       name: newName,
       id: String(persons.length + 1)
@@ -20,6 +26,7 @@ const App = () => {
   const handleContactChanged = (event) => {
     setNewName(event.target.value)
   }
+ 
 
   return (
     <div>
