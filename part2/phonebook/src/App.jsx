@@ -12,9 +12,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilter] = useState('')
+  const url =  'http://localhost:3001/persons'
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons').then(response => {
+    axios.get(url).then(response => {
       setPersons(response.data)
     })
   }, [])
@@ -28,13 +29,14 @@ const App = () => {
     }
     const contactObject = {
       name: newName,
-      number: newNumber,
-      id: String(persons.length + 1)
+      number: newNumber
     }
 
-    setPersons(persons.concat(contactObject))
-    setNewName('')
-    setNewNumber('')
+    axios.post(url, contactObject).then(response => {
+      setPersons(persons.concat(response.data))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const handleContactChanged = (event) => {
