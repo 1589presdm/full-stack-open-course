@@ -24,11 +24,6 @@
       "name": "Dmitrii Presniakov",
       "number": "88005553535",
       "id": "DHQT3XS5D-U"
-    },
-    {
-      "name": "Pisa Popa",
-      "number": "14881613",
-      "id": "Eow80MFYL1o"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

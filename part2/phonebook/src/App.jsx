@@ -3,7 +3,6 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personsService from './services/persons'
-import axios from 'axios'
 import { useEffect } from 'react'
 
 
@@ -18,7 +17,7 @@ const App = () => {
     personsService.getAll().then(initialPersons => {
       setPersons(initialPersons)
     })
-  })
+  }, [])
 
 
   const addContact = (event) => {
@@ -41,6 +40,17 @@ const App = () => {
       
   }
 
+  const deleteContact = (id) => {
+    const person = persons.find(p => p.id === id)
+
+    const ok = window.confirm(`Delete ${person.name}?`)
+    if (ok) {
+      personsService.deleteContact(id).then(() => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+    }
+  }
+
   const handleContactChanged = (event) => {
     setNewName(event.target.value)
   }
@@ -52,6 +62,7 @@ const App = () => {
   const handleFilterChanged = (event) => {
     setFilter(event.target.value)
   }
+
 
   const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase()))
 
@@ -70,7 +81,9 @@ const App = () => {
         onNumberChange={handleNumberChanged} />
 
       <h2>Numbers</h2>
-      <Persons personsToShow={filteredPersons} />
+      <Persons 
+        personsToShow={filteredPersons}
+        handleDelete={deleteContact}/>
     </div>
   )
 }
