@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import personsService from './services/persons'
 import axios from 'axios'
 import { useEffect } from 'react'
 
@@ -12,13 +13,13 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilter] = useState('')
-  const url =  'http://localhost:3001/persons'
 
   useEffect(() => {
-    axios.get(url).then(response => {
-      setPersons(response.data)
+    personsService.getAll().then(initialPersons => {
+      setPersons(initialPersons)
     })
-  }, [])
+  })
+
 
   const addContact = (event) => {
     event.preventDefault()
@@ -32,11 +33,12 @@ const App = () => {
       number: newNumber
     }
 
-    axios.post(url, contactObject).then(response => {
-      setPersons(persons.concat(response.data))
+    personsService.create(contactObject).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
     })
+      
   }
 
   const handleContactChanged = (event) => {
