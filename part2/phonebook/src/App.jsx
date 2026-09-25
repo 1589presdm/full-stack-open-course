@@ -22,10 +22,18 @@ const App = () => {
 
   const addContact = (event) => {
     event.preventDefault()
-    const nameExsists = persons.some(person => person.name === newName)
-    if (nameExsists) {
-      alert(`${newName} is already added to phonebook`)
-      return
+    const existingPerson = persons.find(p => p.name === newName)
+    if (existingPerson) {
+     const ok = window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
+     if (ok) {
+      const updatedPerson = {...existingPerson, number: newNumber}
+      personsService.update(existingPerson.id, updatedPerson).then(returnedPerson => {
+        setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+     }
+     return
     }
     const contactObject = {
       name: newName,
