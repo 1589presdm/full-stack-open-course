@@ -29,6 +29,16 @@
       "name": "Test Testinen",
       "number": "7654321",
       "id": "ipLp567VpxI"
+    },
+    {
+      "name": "Coco Chanel",
+      "number": "11111111",
+      "id": "ec2DzgvvcoE"
+    },
+    {
+      "name": "My number",
+      "number": "00000000",
+      "id": "8WE3WFPQTik"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

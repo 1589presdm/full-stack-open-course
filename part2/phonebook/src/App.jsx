@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personsService from './services/persons'
+import Notification from './components/Notification'
 import { useEffect } from 'react'
 
 
@@ -12,6 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilter] = useState('')
+  const [successfulMessage, setSuccessfulMessage] = useState('null')
 
   useEffect(() => {
     personsService.getAll().then(initialPersons => {
@@ -24,16 +26,20 @@ const App = () => {
     event.preventDefault()
     const existingPerson = persons.find(p => p.name === newName)
     if (existingPerson) {
-     const ok = window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
-     if (ok) {
-      const updatedPerson = {...existingPerson, number: newNumber}
-      personsService.update(existingPerson.id, updatedPerson).then(returnedPerson => {
-        setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
-        setNewName('')
-        setNewNumber('')
-      })
-     }
-     return
+      const ok = window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)
+      if (ok) {
+        const updatedPerson = { ...existingPerson, number: newNumber }
+        personsService.update(existingPerson.id, updatedPerson).then(returnedPerson => {
+          setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          setSuccessfulMessage(`Changed number for ${returnedPerson.name}`)
+          setTimeout(() => {
+            setSuccessfulMessage(null)
+          }, 5000)
+        })
+      }
+      return
     }
     const contactObject = {
       name: newName,
@@ -44,8 +50,12 @@ const App = () => {
       setPersons(persons.concat(returnedPerson))
       setNewName('')
       setNewNumber('')
+      setSuccessfulMessage(`Added ${returnedPerson.name}`)
+      setTimeout(() => {
+        setSuccessfulMessage(null)
+      }, 5000)
     })
-      
+
   }
 
   const deleteContact = (id) => {
@@ -78,6 +88,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successfulMessage} />
       <Filter value={filterValue} onChange={handleFilterChanged} />
 
       <h2>Add a new contact</h2>
@@ -89,9 +100,9 @@ const App = () => {
         onNumberChange={handleNumberChanged} />
 
       <h2>Numbers</h2>
-      <Persons 
+      <Persons
         personsToShow={filteredPersons}
-        handleDelete={deleteContact}/>
+        handleDelete={deleteContact} />
     </div>
   )
 }
