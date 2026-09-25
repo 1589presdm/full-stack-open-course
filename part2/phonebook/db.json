@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-654321",
-      "id": "1"
-    },
-    {
       "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": "2"
@@ -24,21 +19,6 @@
       "name": "Dmitrii Presniakov",
       "number": "88005553535",
       "id": "DHQT3XS5D-U"
-    },
-    {
-      "name": "Test Testinen",
-      "number": "7654321",
-      "id": "ipLp567VpxI"
-    },
-    {
-      "name": "Coco Chanel",
-      "number": "11111111",
-      "id": "ec2DzgvvcoE"
-    },
-    {
-      "name": "My number",
-      "number": "00000000",
-      "id": "8WE3WFPQTik"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

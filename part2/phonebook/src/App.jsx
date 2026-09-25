@@ -13,7 +13,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilter] = useState('')
-  const [successfulMessage, setSuccessfulMessage] = useState('null')
+  const [successfulMessage, setSuccessfulMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personsService.getAll().then(initialPersons => {
@@ -33,11 +34,16 @@ const App = () => {
           setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson))
           setNewName('')
           setNewNumber('')
-          setSuccessfulMessage(`Changed number for ${returnedPerson.name}`)
+          setSuccessfulMessage(`Changed number for ${returnedPerson.name}.`)
           setTimeout(() => {
             setSuccessfulMessage(null)
           }, 5000)
         })
+          .catch(error => {
+            setErrorMessage(`Information of ${existingPerson.name} has already been removed from server.`)
+            setTimeout(() => { setErrorMessage(null) }, 5000)
+            setPersons(persons.filter(p => p.id !== existingPerson.id))
+          })
       }
       return
     }
@@ -66,6 +72,13 @@ const App = () => {
       personsService.deleteContact(id).then(() => {
         setPersons(persons.filter(p => p.id !== id))
       })
+      .catch(error => {
+        setErrorMessage(`Information of ${person.name} has already been removed from server.`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        setPersons(persons.filter(p => p.id !== id))
+      })
     }
   }
 
@@ -88,7 +101,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successfulMessage} />
+      <Notification message={successfulMessage || errorMessage}
+        type = {errorMessage ? 'error' : 'success'} />
       <Filter value={filterValue} onChange={handleFilterChanged} />
 
       <h2>Add a new contact</h2>
