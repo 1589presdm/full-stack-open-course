@@ -22,6 +22,8 @@ const App = () => {
   ? []
   : countries.filter(c => c.name.common.toLowerCase().includes(value.toLowerCase()))
 
+  const country = countriesToShow.length === 1 ? countriesToShow[0] : null
+
   return (
     <div>
       find countries: <input value={value} onChange={handleChange} />
@@ -41,9 +43,16 @@ const App = () => {
 
         {countriesToShow.length === 1 && (
           <div>
-            <h1>{countriesToShow[0].name.common}</h1>
-            <p>capital {countriesToShow[0].capital}</p>
-            <p>area {countriesToShow[0].area}</p>
+            <h1>{country.name.common}</h1>
+            <p>Capital {country.capital}</p>
+            <p>Area {country.area}</p>
+            <h3>Languages:</h3>
+            <ul>
+              {Object.values(country.languages || {}).map(lang => (
+                <li key={lang}>{lang}</li>
+              ))}
+            </ul>
+            <img src={country.flags.png} alt={country.name.common} width={150}/>
           </div>
         )}
       </div>
