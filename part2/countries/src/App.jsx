@@ -6,6 +6,14 @@ import axios from 'axios'
 const App = () => {
   const [value, setValue] = useState('')
   const [countries, setCountries] = useState([])
+  const [weather, setWeather] = useState(null)
+
+  const countriesToShow = value === ''
+    ? []
+    : countries.filter(c => c.name.common.toLowerCase().includes(value.toLowerCase()))
+
+  const country = countriesToShow.length === 1 ? countriesToShow[0] : null
+
 
   useEffect(() => {
     axios.get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
@@ -14,16 +22,21 @@ const App = () => {
       })
   }, [])
 
+  useEffect(() => {
+    if (country) {
+      const capital = country.capital[0]
+      const api_key = import.meta.env.VITE_SOME_KEY
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${api_key}&units=metric`)
+        .then(response => {
+          setWeather(response.data)
+        })
+    }
+  }, [country])
+
 
   const handleChange = (event) => {
     setValue(event.target.value)
   }
-
-  const countriesToShow = value === ''
-    ? []
-    : countries.filter(c => c.name.common.toLowerCase().includes(value.toLowerCase()))
-
-  const country = countriesToShow.length === 1 ? countriesToShow[0] : null
 
   const handleShow = (countryName) => {
     setValue(countryName)
@@ -32,7 +45,6 @@ const App = () => {
   return (
     <div>
       find countries: <input value={value} onChange={handleChange} />
-
 
       <div>
         {countriesToShow.length > 10 && (
@@ -45,7 +57,7 @@ const App = () => {
               {countriesToShow.map(country => (
                 <li key={country.cca3}>
                   {country.name.common} <button onClick={() => handleShow(country.name.common)}>Show</button>
-                  </li>
+                </li>
               ))}
             </ul>
           </div>
@@ -63,6 +75,16 @@ const App = () => {
               ))}
             </ul>
             <img src={country.flags.png} alt={country.name.common} width={150} />
+            {weather && (
+              <div>
+                <h1>Weather in {country.capital}</h1>
+                <p>Temperature {weather.main.temp} Celsius</p>
+                <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                  alt={weather.weather[0].description}
+                />
+                <p>Wind {weather.wind.speed} m/s</p>
+              </div>
+            )}
           </div>
         )}
       </div>
