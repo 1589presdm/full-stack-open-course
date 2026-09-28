@@ -14,19 +14,25 @@ const App = () => {
       })
   }, [])
 
+
   const handleChange = (event) => {
     setValue(event.target.value)
   }
 
   const countriesToShow = value === ''
-  ? []
-  : countries.filter(c => c.name.common.toLowerCase().includes(value.toLowerCase()))
+    ? []
+    : countries.filter(c => c.name.common.toLowerCase().includes(value.toLowerCase()))
 
   const country = countriesToShow.length === 1 ? countriesToShow[0] : null
+
+  const handleShow = (countryName) => {
+    setValue(countryName)
+  }
 
   return (
     <div>
       find countries: <input value={value} onChange={handleChange} />
+
 
       <div>
         {countriesToShow.length > 10 && (
@@ -34,11 +40,15 @@ const App = () => {
         )}
 
         {countriesToShow.length <= 10 && countriesToShow.length > 1 && (
-          <ul>
-            {countriesToShow.map(country => (
-              <li key = {country.cca3}>{country.name.common}</li>
-            ))}
-          </ul>
+          <div>
+            <ul>
+              {countriesToShow.map(country => (
+                <li key={country.cca3}>
+                  {country.name.common} <button onClick={() => handleShow(country.name.common)}>Show</button>
+                  </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {countriesToShow.length === 1 && (
@@ -52,7 +62,7 @@ const App = () => {
                 <li key={lang}>{lang}</li>
               ))}
             </ul>
-            <img src={country.flags.png} alt={country.name.common} width={150}/>
+            <img src={country.flags.png} alt={country.name.common} width={150} />
           </div>
         )}
       </div>
