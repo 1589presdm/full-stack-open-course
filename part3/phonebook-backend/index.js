@@ -54,7 +54,33 @@ phonebook.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+const generateId = () => {
+    const maxId = contacts.length > 0 ? Math.max(...contacts.map(c => Number(c.id))) : 0
+    return String(maxId + 1)
+}
+
+phonebook.post('/api/persons', (request, response) => {
+    const body = request.body
+
+    if(!body.name || !body.number) {
+        return response.status(400).json({
+            error: 'Name or number is missing'
+        })
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: generateId()
+    }
+
+    contacts = contacts.concat(person)
+
+    response.json(person)
+})
+
 const PORT = 3001
 phonebook.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
+
