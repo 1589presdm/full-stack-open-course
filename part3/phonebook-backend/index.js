@@ -68,6 +68,12 @@ phonebook.post('/api/persons', (request, response) => {
         })
     }
 
+    if (contacts.find(p => p.name === body.name)) {
+        return response.status(400).json({
+            error: 'The name is already exsits in the phonebook'
+        })
+    }
+
     const person = {
         name: body.name,
         number: body.number,
