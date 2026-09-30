@@ -1,5 +1,6 @@
 const express = require('express')
 const phonebook = express()
+const morgan = require('morgan')
 
 let contacts = [
     { 
@@ -25,6 +26,12 @@ let contacts = [
 ]
 
 phonebook.use(express.json())
+
+morgan.token('body', (request) => {
+    return request.method === 'POST' ? JSON.stringify(request.body) : ''
+})
+
+phonebook.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 phonebook.get('/api/persons', (request, response) => {
     response.json(contacts)
