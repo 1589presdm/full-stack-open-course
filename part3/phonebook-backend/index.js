@@ -1,6 +1,7 @@
 const express = require('express')
 const phonebook = express()
 const morgan = require('morgan')
+const cors = require('cors')
 
 let contacts = [
     { 
@@ -25,6 +26,7 @@ let contacts = [
     }
 ]
 
+phonebook.use(cors())
 phonebook.use(express.json())
 
 morgan.token('body', (request) => {
@@ -92,7 +94,7 @@ phonebook.post('/api/persons', (request, response) => {
     response.json(person)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 phonebook.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
