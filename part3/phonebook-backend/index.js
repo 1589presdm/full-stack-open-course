@@ -27,6 +27,7 @@ let contacts = [
 ]
 
 phonebook.use(cors())
+phonebook.use(express.static('dist'))
 phonebook.use(express.json())
 
 morgan.token('body', (request) => {
