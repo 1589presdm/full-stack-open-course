@@ -3,6 +3,9 @@ const phonebook = express()
 const morgan = require('morgan')
 const cors = require('cors')
 
+require('dotenv').config()
+const Contact = require('./models/person')
+
 let contacts = [
     { 
       "id": "1",
@@ -37,7 +40,9 @@ morgan.token('body', (request) => {
 phonebook.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 phonebook.get('/api/persons', (request, response) => {
-    response.json(contacts)
+    Contact.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 phonebook.get('/info', (request, response) =>{
@@ -95,7 +100,7 @@ phonebook.post('/api/persons', (request, response) => {
     response.json(person)
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT 
 phonebook.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
