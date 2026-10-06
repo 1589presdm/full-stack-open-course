@@ -6,10 +6,20 @@ const cors = require('cors')
 require('dotenv').config()
 const Contact = require('./models/persons')
 
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+
+    if (error.name === 'CastError') {
+        return response.status(400).send({error: 'malformatted id'})
+    }
+
+    next(error)
+}
 
 phonebook.use(cors())
 phonebook.use(express.static('dist'))
 phonebook.use(express.json())
+
 
 morgan.token('body', (request) => {
     return request.method === 'POST' ? JSON.stringify(request.body) : ''
@@ -30,7 +40,7 @@ phonebook.get('/info', (request, response) =>{
     })
 })
 
-phonebook.get('/api/persons/:id', (request, response) => {
+phonebook.get('/api/persons/:id', (request, response, next) => {
     Contact.findById(request.params.id).then(person => {
             if (person) {
                 response.json(person)
@@ -39,12 +49,14 @@ phonebook.get('/api/persons/:id', (request, response) => {
                 response.status(404).end()
             }
     })
+    .catch(error => next(error))
 })
 
-phonebook.delete('/api/persons/:id', (request, response) => {
+phonebook.delete('/api/persons/:id', (request, response, next) => {
     Contact.findByIdAndDelete(request.params.id).then(() => {
         response.status(204).end()
     })
+    .catch(error => next(error))
 })
 
 phonebook.post('/api/persons', (request, response) => {
@@ -64,7 +76,10 @@ phonebook.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+    .catch(error => next(error))
 })
+
+phonebook.use(errorHandler)
 
 const PORT = process.env.PORT 
 phonebook.listen(PORT, () => {
