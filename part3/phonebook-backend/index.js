@@ -59,14 +59,14 @@ phonebook.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-phonebook.post('/api/persons', (request, response) => {
+phonebook.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if(!body.name || !body.number) {
         return response.status(400).json({
             error: 'Name or number is missing'
         })
-    }
+    } 
 
     const person = new Contact({
         name: body.name,
@@ -75,6 +75,20 @@ phonebook.post('/api/persons', (request, response) => {
 
     person.save().then(savedPerson => {
         response.json(savedPerson)
+    })
+    .catch(error => next(error))
+})
+
+phonebook.put('/api/persons/:id', (request, response, next) => {
+    const {name, number} = request.body
+
+    Contact.findByIdAndUpdate(request.params.id, {name, number}, {new: true}).then((updatedPerson) => {
+        if (updatedPerson) {
+            response.json(updatedPerson)
+        }
+        else {
+            response.status(400).end()
+        }
     })
     .catch(error => next(error))
 })
