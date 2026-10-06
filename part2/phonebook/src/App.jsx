@@ -40,9 +40,15 @@ const App = () => {
           }, 5000)
         })
           .catch(error => {
-            setErrorMessage(`Information of ${existingPerson.name} has already been removed from server.`)
-            setTimeout(() => { setErrorMessage(null) }, 5000)
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+            if (error.response && error.response.status === 400) {
+              setErrorMessage(error.response.data.error)
+              setTimeout(() => setErrorMessage(null), 5000)
+            }
+            else {
+              setErrorMessage(`Information of ${existingPerson.name} has already been removed from server.`)
+              setTimeout(() => { setErrorMessage(null) }, 5000)
+              setPersons(persons.filter(p => p.id !== existingPerson.id))
+            }
           })
       }
       return
@@ -61,6 +67,10 @@ const App = () => {
         setSuccessfulMessage(null)
       }, 5000)
     })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => setErrorMessage(null), 5000)
+      })
 
   }
 
@@ -72,13 +82,13 @@ const App = () => {
       personsService.deleteContact(id).then(() => {
         setPersons(persons.filter(p => p.id !== id))
       })
-      .catch(error => {
-        setErrorMessage(`Information of ${person.name} has already been removed from server.`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-        setPersons(persons.filter(p => p.id !== id))
-      })
+        .catch(error => {
+          setErrorMessage(`Information of ${person.name} has already been removed from server.`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.id !== id))
+        })
     }
   }
 
@@ -102,7 +112,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={successfulMessage || errorMessage}
-        type = {errorMessage ? 'error' : 'success'} />
+        type={errorMessage ? 'error' : 'success'} />
       <Filter value={filterValue} onChange={handleFilterChanged} />
 
       <h2>Add a new contact</h2>
