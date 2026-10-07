@@ -16,10 +16,12 @@ mongoose.connect(url, { family: 4 })
   })
 
 const contactSchema = new mongoose.Schema({
-  name: {type: String,
+  name: {
+    type: String,
     minLength: 3,
     required: true},
-  number: {type: String,
+  number: {
+    type: String,
     required: true
   }
 })
