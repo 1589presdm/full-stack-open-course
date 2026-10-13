@@ -70,13 +70,24 @@ beforeEach(async () => {
     await blogObject.save()*/
 })
 
-test.only('returns the correct amount of blog posts', async () => {
+test('returns the correct amount of blog posts', async () => {
     const response = await api.get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(response.body.length, 6)
 
+})
+
+test.only('verifies the unique identifier property', async () => {
+    const response = await api.get('/api/blogs/')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    const blog = response.body[0]
+
+    assert.notStrictEqual(blog.id, undefined)
+    assert.strictEqual(blog._id, undefined)
 })
 
 after(async () => {
