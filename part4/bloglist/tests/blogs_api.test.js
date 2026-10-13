@@ -90,7 +90,7 @@ test('verifies the unique identifier property', async () => {
     assert.strictEqual(blog._id, undefined)
 })
 
-test.only('making an HTTP POST request', async () => {
+test('making an HTTP POST request', async () => {
     const oldBlogsList = initialBlogs.length
     const newBlog = {
         title: "New Blog",
@@ -134,6 +134,19 @@ test.only('making an HTTP POST request', async () => {
             assert.ok(title.includes('New Blog'))
         })
 })*/
+
+test.only('default like-property is zero', async() => {
+    const newBlog = {
+        title: "New Blog",
+        author: "Me",
+        url: "https://newblog.com"
+    }
+    const response = await api.post('/api/blogs').send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(response.body.likes, 0)
+})
 
 after(async () => {
     await mongoose.connection.close()
