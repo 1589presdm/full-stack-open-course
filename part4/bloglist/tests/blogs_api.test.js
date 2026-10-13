@@ -135,7 +135,7 @@ test('making an HTTP POST request', async () => {
         })
 })*/
 
-test.only('default like-property is zero', async() => {
+test('default like-property is zero', async() => {
     const newBlog = {
         title: "New Blog",
         author: "Me",
@@ -146,6 +146,30 @@ test.only('default like-property is zero', async() => {
         .expect('Content-Type', /application\/json/)
 
     assert.strictEqual(response.body.likes, 0)
+})
+
+test('status code 400 if url property is missing', () => {
+    const newBlog = {
+        title: "New Blog",
+        author: "Me",
+        likes: 13,
+    }
+
+    return api.post('/api/blogs/').send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+})
+
+test.only('status code 400 if title property is missing', async() => {
+    const newBlog = {
+        author: "Me",
+        url: "https://newblog.com",
+        likes: 13,
+    }
+
+    await api.post('/api/blogs').send(newBlog)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
 })
 
 after(async () => {
