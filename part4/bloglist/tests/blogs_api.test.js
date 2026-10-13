@@ -79,7 +79,7 @@ test('returns the correct amount of blog posts', async () => {
 
 })
 
-test.only('verifies the unique identifier property', async () => {
+test('verifies the unique identifier property', async () => {
     const response = await api.get('/api/blogs/')
         .expect(200)
         .expect('Content-Type', /application\/json/)
@@ -89,6 +89,51 @@ test.only('verifies the unique identifier property', async () => {
     assert.notStrictEqual(blog.id, undefined)
     assert.strictEqual(blog._id, undefined)
 })
+
+test.only('making an HTTP POST request', async () => {
+    const oldBlogsList = initialBlogs.length
+    const newBlog = {
+        title: "New Blog",
+        author: "Me",
+        url: "https://newblog.com",
+        likes: 13,
+    }
+    const response = await api.post('/api/blogs/').send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const updatedBlogsList = await api.get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(updatedBlogsList.body.length, oldBlogsList + 1)
+
+    const titels = updatedBlogsList.body.map(x => x.title)
+    assert.ok(titels.includes('New Blog'))
+})
+
+/*test('making an HTTP POST request', () => {
+    const oldBlogsList = initialBlogs.length
+    const newBlog = {
+        title: "New Blog",
+        author: "Me",
+        url: "https://newblog.com",
+        likes: 13,
+    }
+
+    return api.post('/api/blogs/').send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+        .then(() => {
+            return api.get('/api/blogs')
+                .expect(200)
+                .expect('Content-Type', /application\/json/)
+        }).then(res => {
+            assert.strictEqual(res.body.length, oldBlogsList+1)
+            const title = res.body.map(x => x.title)
+            assert.ok(title.includes('New Blog'))
+        })
+})*/
 
 after(async () => {
     await mongoose.connection.close()
