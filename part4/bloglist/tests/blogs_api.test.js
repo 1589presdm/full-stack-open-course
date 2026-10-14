@@ -172,7 +172,7 @@ test('status code 400 if title property is missing', async() => {
         .expect('Content-Type', /application\/json/)
 })
 
-test.only('update the number of likes for a blog post', async() => {
+test('update the number of likes for a blog post', async() => {
     const allBlogs = await Blog.find({})
     const blogToUpdate = allBlogs[0]
     
@@ -187,6 +187,21 @@ test.only('update the number of likes for a blog post', async() => {
     const updatedBlog = await Blog.findById(blogToUpdate.id)
     assert.strictEqual(updatedBlog.likes, 15)
 })
+
+test.only('deleting a single blog post resource', async() => {
+    const allBlogs = await Blog.find({})
+    const blogToDelete = allBlogs[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204)
+    
+    const updatedBlogsList = await api.get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    assert.strictEqual(updatedBlogsList.body.length, allBlogs.length - 1)
+})
+
 
 after(async () => {
     await mongoose.connection.close()
