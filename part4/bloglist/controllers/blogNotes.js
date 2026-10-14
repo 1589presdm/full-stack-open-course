@@ -24,4 +24,21 @@ blogsRouter.post('/', (request, response, next) => {
     .catch(error => next(error))
 })
 
+blogsRouter.put('/:id', async (request, response, next) => {
+  const { title, author, url, likes } = request.body
+
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id,
+      { title, author, url, likes },
+      { new: true, runValidators: true, context: 'query' })
+    if (updatedBlog) {
+      response.json(updatedBlog)
+    }
+    else {
+      response.status(400).end()
+    }
+  }
+  catch (error) { next(error) }
+})
+
 module.exports = blogsRouter

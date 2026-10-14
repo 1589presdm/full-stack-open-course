@@ -160,7 +160,7 @@ test('status code 400 if url property is missing', () => {
         .expect('Content-Type', /application\/json/)
 })
 
-test.only('status code 400 if title property is missing', async() => {
+test('status code 400 if title property is missing', async() => {
     const newBlog = {
         author: "Me",
         url: "https://newblog.com",
@@ -170,6 +170,22 @@ test.only('status code 400 if title property is missing', async() => {
     await api.post('/api/blogs').send(newBlog)
         .expect(400)
         .expect('Content-Type', /application\/json/)
+})
+
+test.only('update the number of likes for a blog post', async() => {
+    const allBlogs = await Blog.find({})
+    const blogToUpdate = allBlogs[0]
+    
+    const updateBlog = {
+        likes: 15
+    }
+
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send(updateBlog)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    
+    const updatedBlog = await Blog.findById(blogToUpdate.id)
+    assert.strictEqual(updatedBlog.likes, 15)
 })
 
 after(async () => {
