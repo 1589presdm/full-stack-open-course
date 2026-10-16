@@ -188,7 +188,7 @@ test('update the number of likes for a blog post', async() => {
     assert.strictEqual(updatedBlog.likes, 15)
 })
 
-test.only('deleting a single blog post resource', async() => {
+test('deleting a single blog post resource', async() => {
     const allBlogs = await Blog.find({})
     const blogToDelete = allBlogs[0]
 
