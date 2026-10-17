@@ -17,13 +17,31 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3003/api/blogs
+# @name login
+POST http://localhost:3003/api/login
 Content-Type: application/json
 
 {
-    "title": "First blog in BD",
+    "username": "testUser",
+    "password": "password"
+}
+
+###
+
+@authToken = {{login.response.body.token}}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "title": "Last one blog in BD",
     "author": "Test Test",
     "url": "https://mytestblog.com",
-    "likes": 13,
-    "userId": "6ad362674f6f7b176ced1539"
+    "likes": 13
 }
+
+
+
