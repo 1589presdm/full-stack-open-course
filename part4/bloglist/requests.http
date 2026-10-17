@@ -1,0 +1,29 @@
+GET http://localhost:3003/api/users
+
+###
+
+GET http://localhost:3003/api/blogs
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+    "username": "testUser",
+    "name": "Test Test",
+    "password": "password"
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "First blog in BD",
+    "author": "Test Test",
+    "url": "https://mytestblog.com",
+    "likes": 13,
+    "userId": "6ad362674f6f7b176ced1539"
+}
