@@ -37,7 +37,7 @@ Content-Type: application/json
 Authorization: Bearer {{authToken}}
 
 {
-    "title": "Last one blog in BD",
+    "title": "Very interesting blog in BD",
     "author": "Test Test",
     "url": "https://mytestblog.com",
     "likes": 13
