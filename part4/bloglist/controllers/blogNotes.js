@@ -2,7 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blogNote')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-const { tokenExtractor } = require('../utils/middleware')
+const { tokenExtractor, userExtractor } = require('../utils/middleware')
 
 
 blogsRouter.get('/', async (request, response) => {
@@ -10,20 +10,15 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', userExtractor ,async (request, response, next) => {
   const body = request.body
+  const user = request.user
 
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
+    if (!user) {
       return response.status(401).json({ error: 'token invalid' })
     }
-
-    const user = await User.findById(decodedToken.id)
-    if (!user) {
-      return response.status(400).json({ error: 'userId missing or not valid' })
-    }
-
+    
     const blog = new Blog({
       title: body.title,
       author: body.author,
@@ -57,19 +52,19 @@ blogsRouter.put('/:id', async (request, response, next) => {
   catch (error) { next(error) }
 })
 
-blogsRouter.delete('/:id', async (request, response, next) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
   try {
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({ error: 'token invalid' })
+    const user = request.user
+    if(!user) {
+      return response.status(401).json({ error: 'token invalid'})
     }
 
     const blog = await Blog.findById(request.params.id)
     if (!blog) {
-      return response.status(400).json({ error: 'blogId missing or invalid' })
+      return response.status(404).json({ error: 'blog not found'})
     }
 
-    if (blog.user.toString() === decodedToken.id.toString()) {
+    if (blog.user.toString() === user._id.toString()) {
       const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
       if (deletedBlog) {
         response.status(204).end()

@@ -43,5 +43,10 @@ Authorization: Bearer {{authToken}}
     "likes": 13
 }
 
+###
+
+DELETE http://localhost:3003/api/blogs/6ad37a6158b6211ff854ecd1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
 
 
