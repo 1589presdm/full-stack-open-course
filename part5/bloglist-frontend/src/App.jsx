@@ -17,6 +17,15 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      loginService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async event => {
     event.preventDefault()
     try {
@@ -35,8 +44,8 @@ const App = () => {
     }
   }
 
-  const handleLogout = async event => {
-    localStorage.removeItem('loggedUser')
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedUser')
     setUser(null)
   }
 
