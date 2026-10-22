@@ -56,7 +56,6 @@ const App = () => {
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
     setSuccessfulMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`)
-    setBlogVisible(false)
     setTimeout(() => {
       setSuccessfulMessage(null)
     }, 5000)
@@ -83,7 +82,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} />
           )}
         </div>
       )}
