@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -6,16 +6,15 @@ import { setToken } from './utils/token'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessfulMessage] = useState(null)
   const [user, setUser] = useState(null)
-  const [blogVisible, setBlogVisible] = useState(false)
 
-  const hideWhenVisible = { display: blogVisible ? 'none' : '' }
-  const showWhenVisible = { display: blogVisible ? '' : 'none' }
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -53,6 +52,7 @@ const App = () => {
   }
 
   const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
     setSuccessfulMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`)
@@ -79,13 +79,9 @@ const App = () => {
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
           <h2>Blogs</h2>
-          <div style={hideWhenVisible}>
-            <button onClick={() => setBlogVisible(true)}>new blog</button>
-          </div>
-          <div style={showWhenVisible}>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
-            <button onClick={() => setBlogVisible(false)}>cancel</button>
-          </div>
+          </Togglable>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
