@@ -5,16 +5,17 @@ import loginService from './services/login'
 import { setToken } from './utils/token'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessfulMessage] = useState(null)
   const [user, setUser] = useState(null)
+  const [blogVisible, setBlogVisible] = useState(false)
 
-
+  const hideWhenVisible = { display: blogVisible ? 'none' : '' }
+  const showWhenVisible = { display: blogVisible ? '' : 'none' }
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -31,15 +32,17 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async event => {
-    event.preventDefault()
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedUser')
+    setUser(null)
+  }
+
+  const login = async (loginObject) => {
     try {
-      const user = await loginService.login({ username, password })
+      const user = await loginService.login(loginObject)
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
     }
     catch {
       setErrorMessage('wrong credentials')
@@ -49,40 +52,11 @@ const App = () => {
     }
   }
 
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedUser')
-    setUser(null)
-  }
-
-
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        <label>
-          username <input
-            type="text"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </label>
-      </div>
-      <div>
-        <label>
-          password <input
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </label>
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
-
   const addBlog = async (blogObject) => {
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
     setSuccessfulMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`)
+    setBlogVisible(false)
     setTimeout(() => {
       setSuccessfulMessage(null)
     }, 5000)
@@ -96,7 +70,7 @@ const App = () => {
       {!user && (
         <div>
           <h2>Log in to application</h2>
-          {loginForm()}
+          <LoginForm login={login} />
         </div>
       )}
 
@@ -105,11 +79,16 @@ const App = () => {
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
           <h2>Blogs</h2>
-          <BlogForm createBlog={addBlog} />
+          <div style={hideWhenVisible}>
+            <button onClick={() => setBlogVisible(true)}>new blog</button>
+          </div>
+          <div style={showWhenVisible}>
+            <BlogForm createBlog={addBlog} />
+            <button onClick={() => setBlogVisible(false)}>cancel</button>
+          </div>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
-
         </div>
       )}
     </div>
