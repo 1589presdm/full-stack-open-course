@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { setToken } from './utils/token'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,9 +13,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessfulMessage] = useState(null)
   const [user, setUser] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+
 
 
   useEffect(() => {
@@ -55,27 +54,6 @@ const App = () => {
     setUser(null)
   }
 
-  const handleCreator = async event => {
-    event.preventDefault()
-
-    const newBlog = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
-    const blog = await blogService.create(newBlog)
-      setBlogs(blogs.concat(blog))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
-      setSuccessfulMessage(`a new blog ${blog.title} by ${blog.author} added.`)
-      setTimeout(() => {
-        setSuccessfulMessage(null)
-      }, 5000)
-  }
-
-
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -101,38 +79,19 @@ const App = () => {
     </form>
   )
 
-  const createForm = () => (
-    <form onSubmit={handleCreator}>
-      <div>
-        <label>
-          title: <input type='text'
-          value={newTitle}
-          onChange={({target}) => setNewTitle(target.value)}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          author: <input type='text'
-          value={newAuthor}
-          onChange={({target}) => setNewAuthor(target.value)}/>
-        </label>
-      </div>
-      <div>
-        <label>
-          url: <input type='text'
-          value={newUrl}
-          onChange={({target}) => setNewUrl(target.value)}/>
-        </label>
-      </div>
-      <button type='submit'>create</button>
-    </form>
-  )
-
+  const addBlog = async (blogObject) => {
+    const returnedBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(returnedBlog))
+    setSuccessfulMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`)
+    setTimeout(() => {
+      setSuccessfulMessage(null)
+    }, 5000)
+  }
 
   return (
     <div>
       <Notification message={successMessage || errorMessage}
-            type={errorMessage ? 'error' : 'success'} />
+        type={errorMessage ? 'error' : 'success'} />
 
       {!user && (
         <div>
@@ -146,12 +105,11 @@ const App = () => {
           <p>{user.name} logged in</p>
           <button onClick={handleLogout}>logout</button>
           <h2>Blogs</h2>
-          <h2>create new blog</h2>
-          {createForm()}
+          <BlogForm createBlog={addBlog} />
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
-          
+
         </div>
       )}
     </div>
