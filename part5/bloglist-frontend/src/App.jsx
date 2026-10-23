@@ -64,8 +64,11 @@ const App = () => {
     if(window.confirm(`Do you want to delete ${blogToDelete.title} from bloglist?`)){
       await blogService.remove(blogToDelete.id)
       setBlogs(blogs.filter(blog => blog.id !== id))
+      setSuccessfulMessage(`${blogToDelete.title} by ${blogToDelete.author} was deleted successfully`)
+      setTimeout(() => {
+        setSuccessfulMessage(null)
+    }, 5000)
     }
-    
   }
 
   const addBlog = async (blogObject) => {
