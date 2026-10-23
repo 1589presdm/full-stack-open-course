@@ -58,6 +58,16 @@ const App = () => {
     setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
   }
 
+  const removeHandler = async (id) => {
+    const blogToDelete = blogs.find(b => b.id === id)
+    
+    if(window.confirm(`Do you want to delete ${blogToDelete.title} from bloglist?`)){
+      await blogService.remove(blogToDelete.id)
+      setBlogs(blogs.filter(blog => blog.id !== id))
+    }
+    
+  }
+
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
@@ -89,7 +99,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {[...blogs].sort((a, b) => b.likes - a.likes).map(blog =>(
-            <Blog key={blog.id} blog={blog} like={likeHandler}/>
+            <Blog key={blog.id} blog={blog} like={likeHandler} remove={removeHandler}/>
           ))}
         </div>
       )}
