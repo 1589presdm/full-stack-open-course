@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, like, remove }) => {
   const [visible, setVisible] = useState(false)
@@ -18,19 +18,19 @@ const Blog = ({ blog, like, remove }) => {
         {visible ? 'hide' : 'view'}
       </button>
       {visible && (
-      <div>
-        <div>{blog.url}</div>
         <div>
+          <div>{blog.url}</div>
+          <div>
           likes {blog.likes}
-          <button onClick={() => like(blog.id)}>like</button>
+            <button onClick={() => like(blog.id)}>like</button>
+          </div>
+          <div>
+            <button onClick={() => remove(blog.id)}>delete</button>
+          </div>
         </div>
-        <div>
-          <button onClick={() => remove(blog.id)}>delete</button>
-        </div>
-      </div>
-    )}
+      )}
     </div>
-  ) 
+  )
 }
 
 export default Blog

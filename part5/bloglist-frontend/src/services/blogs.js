@@ -26,7 +26,7 @@ const remove = async (id) => {
     headers: { Authorization: getToken() }
   }
 
-  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  await axios.delete(`${baseUrl}/${id}`, config)
 }
 
 export default { getAll, create, update, remove }

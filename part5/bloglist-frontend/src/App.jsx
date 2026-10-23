@@ -53,21 +53,21 @@ const App = () => {
 
   const likeHandler = async (id) => {
     const blogToUpdate = blogs.find(b => b.id === id)
-    const updatedBlog = {...blogToUpdate, user: blogToUpdate.user.id, likes: blogToUpdate.likes + 1}
+    const updatedBlog = { ...blogToUpdate, user: blogToUpdate.user.id, likes: blogToUpdate.likes + 1 }
     const returnedBlog = await blogService.update(id, updatedBlog)
     setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
   }
 
   const removeHandler = async (id) => {
     const blogToDelete = blogs.find(b => b.id === id)
-    
+
     if(window.confirm(`Do you want to delete ${blogToDelete.title} from bloglist?`)){
       await blogService.remove(blogToDelete.id)
       setBlogs(blogs.filter(blog => blog.id !== id))
       setSuccessfulMessage(`${blogToDelete.title} by ${blogToDelete.author} was deleted successfully`)
       setTimeout(() => {
         setSuccessfulMessage(null)
-    }, 5000)
+      }, 5000)
     }
   }
 
@@ -101,7 +101,7 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
-          {[...blogs].sort((a, b) => b.likes - a.likes).map(blog =>(
+          {[...blogs].sort((a, b) => b.likes - a.likes).map(blog => (
             <Blog key={blog.id} blog={blog} like={likeHandler} remove={removeHandler}/>
           ))}
         </div>
