@@ -32,7 +32,7 @@ test('the blog URL and likes are shown when the button was clicked', async () =>
 
     render(<Blog blog={blog} />)
 
-    const user =userEvent.setup()
+    const user = userEvent.setup()
     const button = screen.getByText('view')
     await user.click(button)
 
@@ -41,4 +41,29 @@ test('the blog URL and likes are shown when the button was clicked', async () =>
 
     const likesElement = screen.getByText(/7/)
     expect(likesElement).toBeDefined()
+})
+
+test('if the like button is clicked twice, the event handler is called twice', async () => {
+    const blog = {
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7
+    }
+
+    const mockHandler = vi.fn()
+
+    render(<Blog blog={blog} like={mockHandler} />)
+
+    const user = userEvent.setup()
+    
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    const button = screen.getByText('like')
+
+    await user.click(button)
+    await user.click(button)
+
+    expect(mockHandler.mock.calls).toHaveLength(2)
 })
