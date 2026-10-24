@@ -1,6 +1,7 @@
 import {render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import BlogForm from './BlogForm'
 import { expect } from 'vitest'
 
 test('displaying the blog title and author', () => {
@@ -56,7 +57,7 @@ test('if the like button is clicked twice, the event handler is called twice', a
     render(<Blog blog={blog} like={mockHandler} />)
 
     const user = userEvent.setup()
-    
+
     const viewButton = screen.getByText('view')
     await user.click(viewButton)
 
@@ -66,4 +67,32 @@ test('if the like button is clicked twice, the event handler is called twice', a
     await user.click(button)
 
     expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('new blog form', async () => {
+    
+    const mockHandler = vi.fn()
+
+    render(<BlogForm createBlog={mockHandler} />)
+
+    const user = userEvent.setup()
+
+    const inputTitle = screen.getByRole('textbox', {name: 'title:'})
+    await user.type(inputTitle, "How to add a new blog")
+
+    const inputAuthor = screen.getByRole('textbox', {name: 'author:'})
+    await user.type(inputAuthor, "Me")
+
+    const inputUrl = screen.getByRole('textbox', {name: 'url:'})
+    await user.type(inputUrl, "https://bloglist.com/")
+
+    const createButton = screen.getByText('create')
+    await user.click(createButton)
+
+    expect(mockHandler.mock.calls[0][0]).toEqual({
+        title: "How to add a new blog",
+        author: "Me",
+        url: "https://bloglist.com/"
+    })
+
 })
