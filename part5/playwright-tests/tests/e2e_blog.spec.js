@@ -32,12 +32,32 @@ describe('Blog app', () => {
         })
 
         test('fails with wrong credentials', async ({page}) => {
-            const textboxes = await page.getByRole('textbox').all()
-            await textboxes[0].fill('predm')
-            await textboxes[1].fill('wrong')
+            await page.getByLabel('username').fill('predm')
+            await page.getByLabel('password').fill('wrong')
 
             await page.getByRole('button', {name: 'login'}).click()
             await expect(page.getByText('wrong credentials')).toBeVisible()
+        })
+    })
+
+    describe('when logged in', () => {
+        beforeEach(async ({page}) => {
+            await page.getByLabel('username').fill('predm')
+            await page.getByLabel('password').fill('password')
+            await page.getByRole('button', {name: 'login'}).click()
+        })
+
+        test('a new blog can  be created', async ({page}) => {
+            await page.getByRole('button', { name: 'new blog'}).click()
+            const textboxes = await page.getByRole('textbox').all()
+            await textboxes[0].fill('Full Stack Open Course')
+            await textboxes[1].fill('University of Helsinki')
+            await textboxes[2].fill('https://fullstackopen.com/')
+            await page.getByRole('button', {name: 'create'}).click()
+
+            await expect(page.getByText('a new blog Full Stack Open Course by University of Helsinki added')).toBeVisible()
+            await expect(page.locator('.blog').getByText('Full Stack Open Course')).toBeVisible()
+            await expect(page.locator('.blog').getByText('University of Helsinki')).toBeVisible()
         })
     })
 })
