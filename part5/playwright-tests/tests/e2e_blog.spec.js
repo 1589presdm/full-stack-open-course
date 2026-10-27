@@ -12,8 +12,6 @@ describe('Blog app', () => {
         })
 
         await page.goto('/')
-        
-
     })
 
     test('login form is show', async ({page}) => {
@@ -58,6 +56,27 @@ describe('Blog app', () => {
             await expect(page.getByText('a new blog Full Stack Open Course by University of Helsinki added')).toBeVisible()
             await expect(page.locator('.blog').getByText('Full Stack Open Course')).toBeVisible()
             await expect(page.locator('.blog').getByText('University of Helsinki')).toBeVisible()
+        })
+
+        test('the blog can be liked', async ({page}) => {
+            await page.getByRole('button', {name: 'new blog'}).click()
+            const textboxes = await page.getByRole('textbox').all()
+
+            await textboxes[0].fill('Blog for liking')
+            await textboxes[1].fill('Dmitrii Presniakov')
+            await textboxes[2].fill('https://blogforliking.com/')
+            await page.getByRole('button', {name: 'create'}).click()
+            
+        
+            await page.getByRole('button', {name: 'view'}).click()
+            const likes = page.getByRole('button', { name: 'like' }).locator('..')
+            const textBefore = await likes.textContent()
+            const initialLikes = parseInt(textBefore.replace(/\D/g, ''), 10) || 0
+
+            await page.getByRole('button', {name: 'like'}).click()
+            const expectedLikes = String(initialLikes + 1)
+
+            await expect(likes).toContainText(expectedLikes)
         })
     })
 })
