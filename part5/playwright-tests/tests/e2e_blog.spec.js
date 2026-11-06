@@ -78,5 +78,23 @@ describe('Blog app', () => {
 
             await expect(likes).toContainText(expectedLikes)
         })
+
+        test('the blog can be delete', async ({page}) => {
+            await page.getByRole('button', {name: 'new blog'}).click()
+            const textboxes = await page.getByRole('textbox').all()
+
+            await textboxes[0].fill('Blog for deleting')
+            await textboxes[1].fill('Jhon Doe')
+            await textboxes[2].fill('http://blogfordeleting.com/')
+            await page.getByRole('button', {name: 'create'}).click()
+
+
+            await page.getByRole('button', {name: 'view'}).click()
+            page.on('dialog', dialog => dialog.accept())
+            const blogForDeleting = page.locator('.blog').filter({hasText: 'Blog for deleting'})
+            await blogForDeleting.getByRole('button', {name: 'delete'}).click()
+            
+            await expect(blogForDeleting).not.toBeVisible()
+        })
     })
 })
