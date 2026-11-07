@@ -61,13 +61,20 @@ const App = () => {
   const removeHandler = async (id) => {
     const blogToDelete = blogs.find(b => b.id === id)
 
-    if(window.confirm(`Do you want to delete ${blogToDelete.title} from bloglist?`)){
-      await blogService.remove(blogToDelete.id)
-      setBlogs(blogs.filter(blog => blog.id !== id))
-      setSuccessfulMessage(`${blogToDelete.title} by ${blogToDelete.author} was deleted successfully`)
-      setTimeout(() => {
-        setSuccessfulMessage(null)
-      }, 5000)
+    if (window.confirm(`Do you want to delete ${blogToDelete.title} from bloglist?`)) {
+      try {
+        await blogService.remove(blogToDelete.id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        setSuccessfulMessage(`${blogToDelete.title} by ${blogToDelete.author} was deleted successfully`)
+        setTimeout(() => {
+          setSuccessfulMessage(null)
+        }, 5000)
+      } catch (error) {
+        setErrorMessage('you are not allowed to delete this blog')
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
     }
   }
 
@@ -102,7 +109,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {[...blogs].sort((a, b) => b.likes - a.likes).map(blog => (
-            <Blog key={blog.id} blog={blog} like={likeHandler} remove={removeHandler}/>
+            <Blog key={blog.id} blog={blog} like={likeHandler} remove={removeHandler} userId={user.id} />
           ))}
         </div>
       )}
