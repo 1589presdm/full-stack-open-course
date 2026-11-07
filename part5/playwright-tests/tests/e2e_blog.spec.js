@@ -124,7 +124,6 @@ describe('Blog app', () => {
             await page.getByRole('button', { name: 'login' }).click()
 
             const sameBlogElement = page.locator('.blog').filter({ hasText: 'Blog for deleting' })
-
             await sameBlogElement.getByRole('button', { name: 'view' }).click()
             await expect(sameBlogElement.getByRole('button', { name: 'delete' })).not.toBeVisible()
         })

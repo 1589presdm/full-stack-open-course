@@ -30,6 +30,7 @@ blogsRouter.post('/', userExtractor ,async (request, response, next) => {
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
+    await savedBlog.populate('user')
     response.status(201).json(savedBlog)
   }
   catch (error) { next(error) }
@@ -43,6 +44,7 @@ blogsRouter.put('/:id', async (request, response, next) => {
       { title, author, url, likes },
       { new: true, runValidators: true, context: 'query' })
     if (updatedBlog) {
+      await updatedBlog.populate('user')
       response.json(updatedBlog)
     }
     else {
@@ -64,7 +66,7 @@ blogsRouter.delete('/:id', userExtractor, async (request, response, next) => {
       return response.status(404).json({ error: 'blog not found'})
     }
 
-    if (blog.user.toString() === user._id.toString()) {
+    if (blog.user && blog.user.toString() === user._id.toString()) {
       const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
       if (deletedBlog) {
         response.status(204).end()
