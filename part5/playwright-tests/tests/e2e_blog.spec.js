@@ -43,6 +43,8 @@ describe('Blog app', () => {
             await page.getByLabel('username').fill('predm')
             await page.getByLabel('password').fill('password')
             await page.getByRole('button', { name: 'login' }).click()
+
+            await expect(page.getByText('Dmitrii Presniakov logged in')).toBeVisible()
         })
 
         test('a new blog can  be created', async ({ page }) => {
@@ -126,6 +128,42 @@ describe('Blog app', () => {
             const sameBlogElement = page.locator('.blog').filter({ hasText: 'Blog for deleting' })
             await sameBlogElement.getByRole('button', { name: 'view' }).click()
             await expect(sameBlogElement.getByRole('button', { name: 'delete' })).not.toBeVisible()
+        })
+
+        test('the blogs are arranged in the order according to the likes', async ({ page, request }) => {
+            const loggedUser = await page.evaluate(() => {
+                return JSON.parse(localStorage.getItem('loggedUser'))
+            })
+
+            const token = loggedUser.token
+
+            const createBlog = async (title, author, url, likes) => {
+                const response = await request.post('http://localhost:3003/api/blogs', {
+                    data: {
+                        title,
+                        author,
+                        url,
+                        likes,
+                    },
+
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                expect(response.status()).toBe(201)
+            }
+
+            await createBlog('First Blog', 'Dmitrii Presniakov', 'http://first.com', 8)
+            await createBlog('Second Blog', 'Jhon Doe', 'http://second.com', 13)
+            await createBlog('Third Blog', 'Muku', 'http://third.com', 3)
+
+            await page.reload()
+
+            await expect(page.locator('.blog').nth(0)).toContainText('Second Blog')
+            await expect(page.locator('.blog').nth(1)).toContainText('First Blog')
+            await expect(page.locator('.blog').nth(2)).toContainText('Third Blog')
+
         })
     })
 })
