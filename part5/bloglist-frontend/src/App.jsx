@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -7,6 +8,7 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
+import Bloglist from './components/BlogList'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -78,6 +80,7 @@ const App = () => {
     }
   }
 
+
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
@@ -88,32 +91,37 @@ const App = () => {
     }, 5000)
   }
 
-  return (
-    <div>
-      <Notification message={successMessage || errorMessage}
-        type={errorMessage ? 'error' : 'success'} />
+  const padding = {padding: 5}
 
-      {!user && (
-        <div>
-          <h2>Log in to application</h2>
-          <LoginForm login={login} />
-        </div>
-      )}
+  return (
+    <Router>
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/login">login</Link>
+        {user && (<button onClick={handleLogout}>logout</button>)}
+      </div>
+
+      <Routes>
+        <Route path="/login" element={<LoginForm login={login} />} />
+        <Route path="/" element={<Bloglist blogs={blogs} like={likeHandler} remove={removeHandler} userId={user?.id}/>} />
+      </Routes>
+      <div>
+        <Notification message={successMessage || errorMessage}
+          type={errorMessage ? 'error' : 'success'} />
+      </div>
+      
 
       {user && (
         <div>
           <p>{user.name} logged in</p>
-          <button onClick={handleLogout}>logout</button>
+          
           <h2>Blogs</h2>
           <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
-          {[...blogs].sort((a, b) => b.likes - a.likes).map(blog => (
-            <Blog key={blog.id} blog={blog} like={likeHandler} remove={removeHandler} userId={user.id} />
-          ))}
         </div>
       )}
-    </div>
+    </Router>
   )
 }
 
