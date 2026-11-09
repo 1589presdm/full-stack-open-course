@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Routes, Route, Link, 
+  useNavigate, Navigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -7,7 +8,6 @@ import { setToken } from './utils/token'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
-import Togglable from './components/Togglable'
 import Bloglist from './components/BlogList'
 
 const App = () => {
@@ -16,8 +16,6 @@ const App = () => {
   const [successMessage, setSuccessfulMessage] = useState(null)
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
-
-  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -86,13 +84,13 @@ const App = () => {
 
 
   const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
     const returnedBlog = await blogService.create(blogObject)
     setBlogs(blogs.concat(returnedBlog))
     setSuccessfulMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added.`)
     setTimeout(() => {
       setSuccessfulMessage(null)
     }, 5000)
+    navigate("/")
   }
 
   const padding = {padding: 5}
@@ -102,30 +100,20 @@ const App = () => {
       <div>
         <Link style={padding} to="/">blogs</Link>
         {!user && (<Link style={padding} to="/login">login</Link>)}
+        {user && (<Link style={padding} to="/create">new blog</Link>)}
         {user && (<button onClick={handleLogout}>logout</button>)}
       </div>
 
       <Routes>
         <Route path="/login" element={<LoginForm login={login} />} />
-        <Route path="/" element={<Bloglist blogs={blogs} />} />
+        <Route path='/create' element={user ? <BlogForm createBlog={addBlog}/> : <Navigate to="/login" replace />} />
         <Route path="/blogs/:id" element={<Blog blogs={blogs} like={likeHandler} remove={removeHandler} userId={user?.id} />} />
+        <Route path="/" element={<Bloglist blogs={blogs} />} />
       </Routes>
       <div>
         <Notification message={successMessage || errorMessage}
           type={errorMessage ? 'error' : 'success'} />
       </div>
-      
-
-      {user && (
-        <div>
-          <p>{user.name} logged in</p>
-          
-          <h2>Blogs</h2>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-        </div>
-      )}
     </>
   )
 }
