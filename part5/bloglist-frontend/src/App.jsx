@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -15,6 +15,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessfulMessage] = useState(null)
   const [user, setUser] = useState(null)
+  const navigate = useNavigate()
 
   const blogFormRef = useRef()
 
@@ -36,6 +37,7 @@ const App = () => {
   const handleLogout = () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
+    navigate("/")
   }
 
   const login = async (loginObject) => {
@@ -44,6 +46,7 @@ const App = () => {
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
       setToken(user.token)
       setUser(user)
+      navigate("/")
     }
     catch {
       setErrorMessage('wrong credentials')
@@ -94,10 +97,10 @@ const App = () => {
   const padding = {padding: 5}
 
   return (
-    <Router>
+    <>
       <div>
         <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/login">login</Link>
+        {!user && (<Link style={padding} to="/login">login</Link>)}
         {user && (<button onClick={handleLogout}>logout</button>)}
       </div>
 
@@ -121,7 +124,7 @@ const App = () => {
           </Togglable>
         </div>
       )}
-    </Router>
+    </>
   )
 }
 
