@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog, like, remove, userId }) => {
-  const [visible, setVisible] = useState(false)
+const Blog = ({ blogs, like, remove, userId }) => {
+  const { id } = useParams()
+  const blog = blogs.find(b => b.id === id)
 
 
   const blogStyle = {
@@ -12,24 +13,23 @@ const Blog = ({ blog, like, remove, userId }) => {
     marginBottom: 5
   }
 
+  if(!blog) {
+    return <div>Blog not found or loading...</div>
+  }
+
   return (
     <div style={blogStyle} className='blog'>
       <div>{blog.title} {blog.author}</div>
-      <button onClick={() => setVisible(!visible)}>
-        {visible ? 'hide' : 'view'}
-      </button>
-      {visible && (
+      <div>
+        <div>{blog.url}</div>
         <div>
-          <div>{blog.url}</div>
-          <div>
-            likes {blog.likes}
-            <button onClick={() => like(blog.id)}>like</button>
-          </div>
-          {blog.user?.id === userId && (<div>
-            <button onClick={() => remove(blog.id)}>delete</button>
-          </div>)}
+          likes {blog.likes}
+          {userId && (<button onClick={() => like(blog.id)}>like</button>)}
         </div>
-      )}
+        {userId && blog.user?.id === userId && (<div>
+          <button onClick={() => remove(blog.id)}>delete</button>
+        </div>)}
+      </div>
     </div>
   )
 }

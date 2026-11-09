@@ -58,7 +58,7 @@ const App = () => {
 
   const likeHandler = async (id) => {
     const blogToUpdate = blogs.find(b => b.id === id)
-    const updatedBlog = { ...blogToUpdate, user: blogToUpdate.user.id, likes: blogToUpdate.likes + 1 }
+    const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 }
     const returnedBlog = await blogService.update(id, updatedBlog)
     setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
   }
@@ -74,6 +74,7 @@ const App = () => {
         setTimeout(() => {
           setSuccessfulMessage(null)
         }, 5000)
+        navigate("/")
       } catch (error) {
         setErrorMessage('you are not allowed to delete this blog')
         setTimeout(() => {
@@ -106,7 +107,8 @@ const App = () => {
 
       <Routes>
         <Route path="/login" element={<LoginForm login={login} />} />
-        <Route path="/" element={<Bloglist blogs={blogs} like={likeHandler} remove={removeHandler} userId={user?.id}/>} />
+        <Route path="/" element={<Bloglist blogs={blogs} />} />
+        <Route path="/blogs/:id" element={<Blog blogs={blogs} like={likeHandler} remove={removeHandler} userId={user?.id} />} />
       </Routes>
       <div>
         <Notification message={successMessage || errorMessage}
