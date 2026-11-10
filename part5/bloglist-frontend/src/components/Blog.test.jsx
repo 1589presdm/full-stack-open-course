@@ -22,11 +22,13 @@ test('the number of likes are displayed to unauthenticated users, buttons are no
         </MemoryRouter>
     )
 
-    const titleAndAuthor = screen.getByText("React patterns Michael Chan")
-    expect(titleAndAuthor).toBeDefined()
+    const title = screen.getByText("React patterns")
+    expect(title).toBeDefined()
+    const author = screen.getByText("by Michael Chan")
+    expect(author).toBeDefined()
     const url = screen.getByText("https://reactpatterns.com/")
     expect(url).toBeDefined()
-    const likesElement = screen.getByText(/likes 7/)
+    const likesElement = screen.getByText(/Likes: 7/)
     expect(likesElement).toBeDefined()
     expect(screen.queryByRole('button')).toBeNull()
 
@@ -76,7 +78,7 @@ test('the blog creator is also shown the delete button', () => {
         </MemoryRouter>
     )
 
-    expect(screen.getByRole('button', {name: 'delete'})).toBeDefined()
+    expect(screen.getByRole('button', {name: 'Remove'})).toBeDefined()
 })
 
 test('creator can delete their blog', async() => {
@@ -100,7 +102,7 @@ test('creator can delete their blog', async() => {
         </MemoryRouter>
     )
     
-    const deleteButton = screen.getByRole('button', { name: 'delete' })
+    const deleteButton = screen.getByRole('button', { name: 'Remove' })
     await user.click(deleteButton)
 
     expect(mockRemove).toHaveBeenCalledTimes(1)
@@ -113,11 +115,11 @@ test('creating blog calls createBlog with correct data', async () =>{
 
     render(<BlogForm createBlog={mockCreate}/>)
 
-    await user.type(screen.getByLabelText('title:'), 'React patterns')
-    await user.type(screen.getByLabelText('author:'), 'Michael Chan')
-    await user.type(screen.getByLabelText('url:'), 'https://reactpatterns.com/')
+    await user.type(screen.getByLabelText('title'), 'React patterns')
+    await user.type(screen.getByLabelText('author'), 'Michael Chan')
+    await user.type(screen.getByLabelText('url'), 'https://reactpatterns.com/')
 
-    await user.click(screen.getByRole('button', { name: 'create' }))
+    await user.click(screen.getByRole('button', { name: 'Create' }))
 
     expect(mockCreate).toHaveBeenCalledTimes(1)
     expect(mockCreate).toHaveBeenCalledWith({
