@@ -1,10 +1,12 @@
-import {render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import { expect, vi } from 'vitest'
 import BlogForm from './BlogForm'
-import { expect } from 'vitest'
 
-test('displaying the blog title and author', () => {
+
+test('the number of likes are displayed to unauthenticated users, buttons are not displayed', () => {
     const blog = {
         title: "React patterns",
         author: "Michael Chan",
@@ -12,87 +14,115 @@ test('displaying the blog title and author', () => {
         likes: 7
     }
 
-    const {container} = render(<Blog blog={blog} />)
+    render(
+        <MemoryRouter initialEntries={['/blogs/123']}>
+            <Routes>
+                <Route path='/blogs/:id' element={<Blog blogs={[{ ...blog, id: '123' }]} />} />
+            </Routes>
+        </MemoryRouter>
+    )
 
-    const div = container.querySelector('.blog')
-
-    expect(div).toHaveTextContent('React patterns')
-    expect(div).toHaveTextContent('Michael Chan')
-
-    expect(div).not.toHaveTextContent('https://reactpatterns.com/')
-    expect(div).not.toHaveTextContent('7')
-})
-
-test('the blog URL and likes are shown when the button was clicked', async () => {
-    const blog = {
-        title: "React patterns",
-        author: "Michael Chan",
-        url: "https://reactpatterns.com/",
-        likes: 7
-    }
-
-    render(<Blog blog={blog} />)
-
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
-
-    const urlElement = screen.getByText("https://reactpatterns.com/")
-    expect(urlElement).toBeDefined()
-
-    const likesElement = screen.getByText(/7/)
+    const titleAndAuthor = screen.getByText("React patterns Michael Chan")
+    expect(titleAndAuthor).toBeDefined()
+    const url = screen.getByText("https://reactpatterns.com/")
+    expect(url).toBeDefined()
+    const likesElement = screen.getByText(/likes 7/)
     expect(likesElement).toBeDefined()
+    expect(screen.queryByRole('button')).toBeNull()
+
 })
 
-test('if the like button is clicked twice, the event handler is called twice', async () => {
+test('the not blog creator are shown only the like button', () => {
+    const userId = 'predm'
+
     const blog = {
+        id: "123",
         title: "React patterns",
         author: "Michael Chan",
         url: "https://reactpatterns.com/",
-        likes: 7
+        likes: 7,
+        user: { id: 'kuku' }
     }
 
-    const mockHandler = vi.fn()
+    render(
+        <MemoryRouter initialEntries={['/blogs/123']}>
+            <Routes>
+                <Route path='/blogs/:id' element={<Blog blogs={[blog]} userId={userId}/>} />
+            </Routes>
+        </MemoryRouter>
+    )
 
-    render(<Blog blog={blog} like={mockHandler} />)
+    expect(screen.getByRole('button', { name: 'like' })).toBeDefined()
+    expect(screen.queryByRole('button', { name: 'delete' })).toBeNull()
 
-    const user = userEvent.setup()
-
-    const viewButton = screen.getByText('view')
-    await user.click(viewButton)
-
-    const button = screen.getByText('like')
-
-    await user.click(button)
-    await user.click(button)
-
-    expect(mockHandler.mock.calls).toHaveLength(2)
 })
 
-test('new blog form', async () => {
-    
-    const mockHandler = vi.fn()
+test('the blog creator is also shown the delete button', () => {
+    const userId = 'predm'
+    const blog = {
+        id: "123",
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+        user: { id: 'predm' }
+    }
 
-    render(<BlogForm createBlog={mockHandler} />)
+    render (
+        <MemoryRouter initialEntries={['/blogs/123']}>
+            <Routes>
+                <Route path='/blogs/:id' element={<Blog blogs={[blog]} userId={userId}/>} />
+            </Routes>
+        </MemoryRouter>
+    )
 
+    expect(screen.getByRole('button', {name: 'delete'})).toBeDefined()
+})
+
+test('creator can delete their blog', async() => {
     const user = userEvent.setup()
+    const mockRemove = vi.fn()
 
-    const inputTitle = screen.getByRole('textbox', {name: 'title:'})
-    await user.type(inputTitle, "How to add a new blog")
+    const blog = {
+        id: "123",
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 7,
+        user: { id: 'predm' }
+    }
 
-    const inputAuthor = screen.getByRole('textbox', {name: 'author:'})
-    await user.type(inputAuthor, "Me")
+    render(
+        <MemoryRouter initialEntries={['/blogs/123']}>
+            <Routes>
+                <Route path='/blogs/:id' element={<Blog blogs={[blog]} userId='predm' remove={mockRemove}/>} />
+            </Routes>
+        </MemoryRouter>
+    )
+    
+    const deleteButton = screen.getByRole('button', { name: 'delete' })
+    await user.click(deleteButton)
 
-    const inputUrl = screen.getByRole('textbox', {name: 'url:'})
-    await user.type(inputUrl, "https://bloglist.com/")
+    expect(mockRemove).toHaveBeenCalledTimes(1)
+    expect(mockRemove).toHaveBeenCalledWith('123')
+})
 
-    const createButton = screen.getByText('create')
-    await user.click(createButton)
+test('creating blog calls createBlog with correct data', async () =>{
+    const user = userEvent.setup()
+    const mockCreate = vi.fn()
 
-    expect(mockHandler.mock.calls[0][0]).toEqual({
-        title: "How to add a new blog",
-        author: "Me",
-        url: "https://bloglist.com/"
+    render(<BlogForm createBlog={mockCreate}/>)
+
+    await user.type(screen.getByLabelText('title:'), 'React patterns')
+    await user.type(screen.getByLabelText('author:'), 'Michael Chan')
+    await user.type(screen.getByLabelText('url:'), 'https://reactpatterns.com/')
+
+    await user.click(screen.getByRole('button', { name: 'create' }))
+
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    expect(mockCreate).toHaveBeenCalledWith({
+        title: 'React patterns',
+        author: 'Michael Chan',
+        url: 'https://reactpatterns.com/'
     })
-
 })
