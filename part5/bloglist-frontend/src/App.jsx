@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link, 
-  useNavigate, Navigate } from 'react-router-dom'
+import {
+  Routes, Route, Link,
+  useNavigate, Navigate
+} from 'react-router-dom'
+import { AppBar, Toolbar, Button } from '@mui/material'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -93,20 +96,20 @@ const App = () => {
     navigate("/")
   }
 
-  const padding = {padding: 5}
-
   return (
     <>
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        {!user && (<Link style={padding} to="/login">login</Link>)}
-        {user && (<Link style={padding} to="/create">new blog</Link>)}
-        {user && (<button onClick={handleLogout}>logout</button>)}
-      </div>
+      <AppBar position='static'>
+        <Toolbar>
+          <Button color='inherit' component={Link} to="/">Blogs</Button>
+          {!user && (<Button color='inherit' component={Link} to="/login">LogIn</Button>)}
+          {user && (<Button color='inherit' component={Link} to="/create">New blog</Button>)}
+          {user && (<Button color='inherit' onClick={handleLogout}>LogOut</Button>)}
+        </Toolbar>
+      </AppBar>
 
       <Routes>
         <Route path="/login" element={<LoginForm login={login} />} />
-        <Route path='/create' element={user ? <BlogForm createBlog={addBlog}/> : <Navigate to="/login" replace />} />
+        <Route path='/create' element={user ? <BlogForm createBlog={addBlog} /> : <Navigate to="/login" replace />} />
         <Route path="/blogs/:id" element={<Blog blogs={blogs} like={likeHandler} remove={removeHandler} userId={user?.id} />} />
         <Route path="/" element={<Bloglist blogs={blogs} />} />
       </Routes>
@@ -114,6 +117,7 @@ const App = () => {
         <Notification message={successMessage || errorMessage}
           type={errorMessage ? 'error' : 'success'} />
       </div>
+
     </>
   )
 }
