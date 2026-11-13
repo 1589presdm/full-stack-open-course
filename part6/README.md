@@ -1,0 +1,1 @@
+Solutions of Part 4 "Full Stack Open State management" exercises to this folder
