@@ -1,12 +1,14 @@
 import { useAnecdoteActions } from "../store"
+import anecdoteService from '../services/anecdotes'
 
 const AnecdoteFrom = () => {
     const { add } = useAnecdoteActions()
 
-    const addAnecdote = (event) => {
+    const addAnecdote = async (event) => {
         event.preventDefault()
         const content = event.target.new.value
-        add({ content })
+        const newAnecdote = await anecdoteService.createNew(content)
+        add(newAnecdote)
         event.target.reset()
     }
 
