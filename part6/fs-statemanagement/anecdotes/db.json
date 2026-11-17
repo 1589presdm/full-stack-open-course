@@ -44,6 +44,11 @@
       "content": "new joke",
       "votes": 23,
       "id": "1INDW7su75o"
+    },
+    {
+      "content": "comedy test",
+      "votes": 1,
+      "id": "qGGks5Qct6w"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
