@@ -2,7 +2,7 @@ name: Anecdotes tests
 
 on:
   push:
-    branches: [xmain]
+    branches: [main]
 
 jobs:
   playwright-tests:
@@ -15,19 +15,19 @@ jobs:
           node-version: 24
 
       - name: Install anecdotes dependencies
-        working-directory: anecdotes
+        working-directory: part6/fs-statemanagement/anecdotes
         run: npm ci
 
       - name: Install test dependencies
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: npm ci
 
       - name: Install Playwright browsers
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: npx playwright test
 
       - name: Upload Playwright report
@@ -35,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: anecdotes-tests/playwright-report/
+          path: part6/fs-statemanagement/anecdotes-tests/playwright-report/
           retention-days: 14

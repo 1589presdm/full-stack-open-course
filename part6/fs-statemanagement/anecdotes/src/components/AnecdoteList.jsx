@@ -11,7 +11,7 @@ const AnecdoteList = () => {
 
     const handleVote = async (anecdote) => {
         await vote(anecdote.id)
-        setNotification(`You voted "${anecdote.content}"`)
+        setNotification(`you voted '${anecdote.content}'`)
         setTimeout(() =>{
             clear()
         }, 5000)
@@ -19,7 +19,7 @@ const AnecdoteList = () => {
 
     const handleDelete = async (anecdote) => {
         await remove(anecdote.id)
-        setNotification(`You successfully delete "${anecdote.content}"`)
+        setNotification(`you successfully delete '${anecdote.content}'`)
         setTimeout(() => {
             clear()
         }, 5000)

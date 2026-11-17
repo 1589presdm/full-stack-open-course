@@ -6,7 +6,7 @@ const AnecdoteFrom = () => {
 
     const addAnecdote = async (event) => {
         event.preventDefault()
-        const content = event.target.new.value
+        const content = event.target.anecdote.value
         const newAnecdote = await anecdoteService.createNew(content)
         add(newAnecdote)
         event.target.reset()
@@ -17,7 +17,7 @@ const AnecdoteFrom = () => {
             <h2>create new</h2>
             <form onSubmit={addAnecdote}>
                 <div>
-                    <input name="new" />
+                    <input name="anecdote" />
                 </div>
                 <button>create</button>
             </form>
