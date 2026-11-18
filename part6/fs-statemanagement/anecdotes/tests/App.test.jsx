@@ -1,7 +1,8 @@
-import { test, expect, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { useAnecdotes } from '../src/store'
+import { beforeEach, describe, test, expect, vi } from 'vitest'
+import { render, waitFor } from '@testing-library/react'
+import useAnecdoteStore from '../src/store'
 import App from '../src/App'
+import AnecdoteList from '../src/components/AnecdoteList'
 import anecdoteService from '../src/services/anecdotes'
 
 vi.mock('../src/services/anecdotes', () => ({
@@ -10,33 +11,56 @@ vi.mock('../src/services/anecdotes', () => ({
     }
 }))
 
-const StoreInspector = () => {
-    const anecdotes = useAnecdotes()
+const testAnecdotes = [
+    { id: '1', content: 'First joke', votes: 8 },
+    { id: '2', content: 'Second joke', votes: 13 },
+    { id: '3', content: 'Third joke', votes: 11 }
+]
 
-    return (
-        <div data-testid='store-state'>
-            {JSON.stringify(anecdotes)}
-        </div>
-    )
-}
+beforeEach(() => {
+    useAnecdoteStore.setState({
+        anecdotes: [],
+        filter: ''
+    })
 
-test('initializes anecdotes from backend', async () => {
-    const anecdotesFromBackend = [
-        {id: '1', content: 'First joke', votes: 8},
-        {id: '2', content: 'Second joke', votes: 13}
-    ]
+    vi.clearAllMocks()
+})
 
-    anecdoteService.getAll.mockResolvedValue(anecdotesFromBackend)
+describe('Anecdotes', () => {
+    test('initializes anecdotes from backend', async () => {
+        const anecdotesFromBackend = [
+            { id: '1', content: 'First joke', votes: 8 },
+            { id: '2', content: 'Second joke', votes: 13 }
+        ]
 
-    render(
-        <>
-            <App />
-            <StoreInspector />
-        </>
-    )
+        anecdoteService.getAll.mockResolvedValue(anecdotesFromBackend)
 
-    expect(await screen.findByText('First joke')).toBeTruthy()
-    expect(await screen.findByText('Second joke')).toBeTruthy()
-    expect(JSON.parse(screen.getByTestId('store-state').textContent)).toEqual(anecdotesFromBackend)
-    expect(anecdoteService.getAll).toHaveBeenCalled()
+        render(<App />)
+
+        await waitFor(() => {
+            expect(useAnecdoteStore.getState().anecdotes).toEqual(anecdotesFromBackend)
+        })
+
+        expect(anecdoteService.getAll).toHaveBeenCalled()
+    })
+
+    test('dasplays anecdotes sorted by votes', () => {
+        useAnecdoteStore.setState({
+            anecdotes: testAnecdotes
+        })
+
+        const { container } = render(<AnecdoteList />)
+
+        const contentElements = Array.from(
+            container.querySelectorAll('div')
+        ).filter(element => testAnecdotes.some(a => a.content === element.textContent))
+
+        const actualOrder = contentElements.map(element => element.textContent)
+
+        expect(actualOrder).toEqual([
+            'Second joke',
+            'Third joke',
+            'First joke'
+        ])
+    })
 })
