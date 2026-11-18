@@ -7,7 +7,8 @@ import anecdoteService from '../src/services/anecdotes'
 
 vi.mock('../src/services/anecdotes', () => ({
     default: {
-        getAll: vi.fn()
+        getAll: vi.fn(),
+        updateVote: vi.fn()
     }
 }))
 
@@ -80,4 +81,26 @@ describe('Anecdotes', () => {
         expect(screen.queryByText('First joke')).toBeNull()
         expect(screen.queryByText('Third joke')).toBeNull()
     })
+
+    test('voiting increases the number of votes', async () => {
+        const anecdote = {
+            id: '1',
+            content: 'First joke',
+            votes: 8
+        }
+
+        useAnecdoteStore.setState({
+            anecdotes: [anecdote]
+        })
+
+        const updatedAnecdote = {...anecdote, votes: 9}
+
+        anecdoteService.updateVote.mockResolvedValue(updatedAnecdote)
+
+        await useAnecdoteStore.getState().actions.vote(anecdote.id)
+
+        expect(anecdoteService.updateVote).toHaveBeenCalledWith('1', 9)
+        expect(useAnecdoteStore.getState().anecdotes[0].votes).toBe(9)
+    })
+
 })
