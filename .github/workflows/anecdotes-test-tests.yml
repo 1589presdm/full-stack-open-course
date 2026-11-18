@@ -2,7 +2,7 @@ name: Anecdotes tests check
 
 on:
   push:
-    branches: [xmain]
+    branches: [main]
 
 jobs:
   unit-tests:
@@ -15,21 +15,21 @@ jobs:
           node-version: 24
 
       - name: Install anecdotes dependencies
-        working-directory: anecdotes
+        working-directory: part6/fs-statemanagement/anecdotes
         run: npm ci
 
       - name: Verify test files exist
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: node verify-tests-exist.mjs
 
       - name: Verify tests are not vacuous
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: node verify-tests-not-vacuous.mjs
 
       - name: Run unit tests
-        working-directory: anecdotes
+        working-directory: part6/fs-statemanagement/anecdotes
         run: npm test
 
       - name: Verify unit tests fail against a broken store
-        working-directory: anecdotes-tests
+        working-directory: part6/fs-statemanagement/anecdotes-tests
         run: node verify-tests-mutation.mjs
