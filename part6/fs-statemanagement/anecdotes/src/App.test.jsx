@@ -1,11 +1,11 @@
 import { beforeEach, afterEach, describe, test, expect, vi } from 'vitest'
 import { render, waitFor, screen, cleanup } from '@testing-library/react'
-import useAnecdoteStore from '../src/store'
-import App from '../src/App'
-import AnecdoteList from '../src/components/AnecdoteList'
-import anecdoteService from '../src/services/anecdotes'
+import useAnecdoteStore from './store'
+import App from './App'
+import AnecdoteList from './components/AnecdoteList'
+import anecdoteService from './services/anecdotes'
 
-vi.mock('../src/services/anecdotes', () => ({
+vi.mock('./services/anecdotes', () => ({
     default: {
         getAll: vi.fn(),
         updateVote: vi.fn()
