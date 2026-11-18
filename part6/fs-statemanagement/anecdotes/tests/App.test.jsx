@@ -1,5 +1,5 @@
-import { beforeEach, describe, test, expect, vi } from 'vitest'
-import { render, waitFor } from '@testing-library/react'
+import { beforeEach, afterEach, describe, test, expect, vi } from 'vitest'
+import { render, waitFor, screen, cleanup } from '@testing-library/react'
 import useAnecdoteStore from '../src/store'
 import App from '../src/App'
 import AnecdoteList from '../src/components/AnecdoteList'
@@ -24,6 +24,10 @@ beforeEach(() => {
     })
 
     vi.clearAllMocks()
+})
+
+afterEach(() => {
+    cleanup()
 })
 
 describe('Anecdotes', () => {
@@ -62,5 +66,18 @@ describe('Anecdotes', () => {
             'Third joke',
             'First joke'
         ])
+    })
+
+    test('displays only anecdotes matching the filter', () => {
+        useAnecdoteStore.setState({
+            anecdotes: testAnecdotes,
+            filter: 'Second'
+        })
+
+        render (<AnecdoteList />)
+
+        expect(screen.getByText('Second joke')).toBeTruthy()
+        expect(screen.queryByText('First joke')).toBeNull()
+        expect(screen.queryByText('Third joke')).toBeNull()
     })
 })
