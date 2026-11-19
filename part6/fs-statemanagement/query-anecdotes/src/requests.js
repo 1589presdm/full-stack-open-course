@@ -11,14 +11,31 @@ export const getAnecdotes = async () => {
 export const createAnecdote = async (newAnecdote) => {
     const options = {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAnecdote)
     }
 
     const response = await fetch(baseUrl, options)
-    if(!response.ok) {
+    if (!response.ok) {
         throw new Error('Failed to create anecdote')
     }
 
     return await response.json()
+}
+
+export const updateVote = async ({ id, votes }) => {
+    const options = {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ votes })
+    }
+
+    const response = await fetch(`${baseUrl}/${id}`, options)
+
+    if (!response.ok) {
+        throw new Error('Failed to updated vote')
+    }
+
+    return await response.json()
+
 }
