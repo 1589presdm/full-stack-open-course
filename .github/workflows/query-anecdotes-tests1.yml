@@ -2,7 +2,7 @@ name: Query anecdotes tests 1
 
 on:
   push:
-    branches: [xmain]
+    branches: [main]
 
 jobs:
   playwright-tests:
@@ -15,19 +15,19 @@ jobs:
           node-version: 24
 
       - name: Install query-anecdotes dependencies
-        working-directory: query-anecdotes
+        working-directory: part6/fs-statemanagement/query-anecdotes
         run: npm ci
 
       - name: Install test dependencies
-        working-directory: query-anecdotes-tests
+        working-directory: part6/fs-statemanagement/query-anecdotes-tests
         run: npm ci
 
       - name: Install Playwright browsers
-        working-directory: query-anecdotes-tests
+        working-directory: part6/fs-statemanagement/query-anecdotes-tests
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        working-directory: query-anecdotes-tests
+        working-directory: part6/fs-statemanagement/query-anecdotes-tests
         run: npm run test:anecdotes
 
       - name: Upload Playwright report
@@ -35,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: query-anecdotes-playwright-report
-          path: query-anecdotes-tests/playwright-report/
+          path: part6/fs-statemanagement/query-anecdotes-tests/playwright-report/
           retention-days: 14
