@@ -49,6 +49,11 @@
       "content": "anecdote ",
       "votes": 1,
       "id": "8e29737d-2e16-45ed-9f47-5e9e75977ab1"
+    },
+    {
+      "content": "funny note",
+      "votes": 0,
+      "id": "bf3ae20a-268b-43f6-a0f0-5d915dbcee5a"
     }
   ]
 }

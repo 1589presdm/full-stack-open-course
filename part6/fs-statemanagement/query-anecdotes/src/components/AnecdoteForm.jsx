@@ -10,8 +10,9 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.reset()
-    createAnecdote(content)
-    setNotification(`anecdote '${content}' was added successfully`)
+    createAnecdote(content, () => {
+      setNotification(`anecdote '${content}' was added successfully`)
+    })
     setTimeout(() => {
       setNotification('')
     }, 5000)
