@@ -1,17 +1,13 @@
 import { useAnecdotes } from "../hooks/useAnecdotes"
-import { useContext } from "react"
-import { NotificationContext } from "../NotificationContext"
+import { useNotify } from "../NotificationContext"
 
 const AnecdoteList = () => {
     const { anecdotes, voteAnecdote } = useAnecdotes()
-    const { setNotification } = useContext(NotificationContext)
+    const notify =useNotify()
 
     const handleVote = (anecdote) => {
         voteAnecdote(anecdote, () => {
-            setNotification(`anecdote '${anecdote.content}' voted`)
-            setTimeout(() => {
-                setNotification('')
-            }, 5000)
+            notify(`anecdote '${anecdote.content}' voted`)
         })
     }
 
