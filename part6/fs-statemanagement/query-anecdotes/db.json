@@ -1,64 +1,29 @@
 {
   "anecdotes": [
     {
-      "content": "If it hurts, do it more often",
-      "id": "47145",
-      "votes": 1
-    },
-    {
-      "content": "Adding manpower to a late software project makes it later!",
-      "id": "21149",
-      "votes": 1
-    },
-    {
-      "content": "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
-      "id": "69581",
-      "votes": 1
-    },
-    {
-      "content": "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-      "id": "36975",
+      "id": "e2587358-206c-4335-bc72-74aac7a16a55",
+      "content": "Make it work, then make it fast",
       "votes": 0
     },
     {
-      "content": "Premature optimization is the root of all evil.",
-      "id": "25170",
-      "votes": 1
+      "id": "701f0483-58aa-4b2f-83d2-74c0957f537a",
+      "content": "There are two hard things in computer science",
+      "votes": 3
     },
     {
-      "content": "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
-      "id": "98312",
-      "votes": 1
+      "id": "ae380388-16b3-4541-8331-ca1d6d9ecbbf",
+      "content": "Untested code is broken code",
+      "votes": 3
     },
     {
-      "content": "lol-lol",
-      "votes": 1,
-      "id": "465fe7de-7e3e-405c-bb2e-6f43a3624251"
+      "id": "72185633-172b-4669-bf03-d1e3a563681b",
+      "content": "Simplicity is the ultimate sophistication",
+      "votes": 5
     },
     {
-      "content": "it is a new anecdote ",
-      "votes": 2,
-      "id": "bc1d298c-47fd-47f0-a78d-d8f4436cfe39"
-    },
-    {
-      "content": "Test anecdote",
-      "votes": 4,
-      "id": "05365c19-7d58-4659-9c36-c8a79c8de3de"
-    },
-    {
-      "content": "anecdote ",
-      "votes": 1,
-      "id": "8e29737d-2e16-45ed-9f47-5e9e75977ab1"
-    },
-    {
-      "content": "funny note",
-      "votes": 0,
-      "id": "bf3ae20a-268b-43f6-a0f0-5d915dbcee5a"
-    },
-    {
-      "content": "test joke ",
-      "votes": 0,
-      "id": "bf0c2e3c-1012-4f47-a129-c891c89558c8"
+      "id": "4ad38e43-6f3a-46b1-ace5-e0468e0806d1",
+      "content": "Real artists ship code",
+      "votes": 7
     }
   ]
 }

@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.reset()
     createAnecdote(content, () => {
-      notify(`anecdote '${content}' was added successfully`)
+      notify(`anecdote '${content}' was created successfully`)
     }, (error) => {
       notify(error.message)
     })
