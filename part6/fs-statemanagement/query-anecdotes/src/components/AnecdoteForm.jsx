@@ -6,16 +6,23 @@ const AnecdoteForm = () => {
   const {createAnecdote} = useAnecdotes()
   const {setNotification} = useContext(NotificationContext)
 
+  const showNotification = (message) => {
+    setNotification(message)
+
+    setTimeout(() => {
+      setNotification('')
+    }, 5000)
+  }
+
   const onCreate = (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.reset()
     createAnecdote(content, () => {
-      setNotification(`anecdote '${content}' was added successfully`)
+      showNotification(`anecdote '${content}' was added successfully`)
+    }, (error) => {
+      showNotification(error.message)
     })
-    setTimeout(() => {
-      setNotification('')
-    }, 5000)
   }
 
   return (

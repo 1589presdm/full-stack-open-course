@@ -14,7 +14,7 @@ export const useAnecdotes = () => {
         mutationFn: createAnecdote,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
-        }
+        },
     })
 
     const updateAnecdoteMutation = useMutation({
@@ -29,7 +29,7 @@ export const useAnecdotes = () => {
         isPending: result.isPending,
         isError: result.isError,
         error: result.error,
-        createAnecdote: (content, onSuccess) => newAnecdoteMutation.mutate({ content, votes: 0 }, { onSuccess }),
+        createAnecdote: (content, onSuccess, onError) => newAnecdoteMutation.mutate({ content, votes: 0 }, { onSuccess, onError }),
         voteAnecdote: (anecdote, onSuccess) => updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 }, { onSuccess })
     }
 }
